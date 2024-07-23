@@ -13,5 +13,6 @@ void AKageController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	ControlledPawn->AddMovementInput(FVector(Speed * DeltaTime, 0.f, 0.f));
+	// Add forward movement infinitely
+	if (ControlledPawn) ControlledPawn->AddMovementInput(FVector(Speed * DeltaTime, 0.f, 0.f));
 }
