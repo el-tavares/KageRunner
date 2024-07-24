@@ -77,8 +77,9 @@ void AKageController::LaunchProjectile()
 		FVector LocationToSpawn = KageCharacter->GetActorLocation();
 		LocationToSpawn += KageCharacter->GetActorForwardVector() * 100.f;	// Add forward offset
 
-		World->SpawnActor<AProjectile>(ProjectileClass, LocationToSpawn, FRotator(0.f));
-	}
+		AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, LocationToSpawn, FRotator(0.f));
+		Projectile->SetLifeSpan(3.f);
 
-	if (KageCharacter) KageCharacter->LaunchProjectile();
+		KageCharacter->LaunchProjectile();
+	}
 }
