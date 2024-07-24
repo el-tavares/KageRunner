@@ -15,25 +15,22 @@ public:
 	AKageCharacter();
 
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-protected:
-	virtual void BeginPlay() override;
-
-	// TEMP
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnBoxColliderUpdate();
-
-private:
 	// ACTIONS
 
 	void EvadeUp();
 	void EvadeLeft();
 	void EvadeRight();
 	void EvadeDown();
-	void LaunchKunai();
+	void LaunchProjectile();
 
+protected:
+	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintImplementableEvent)	// Temp
+	void OnBoxColliderUpdate();				// Temp
+
+private:
 	UFUNCTION(BlueprintCallable)
 	void UpdateBoxCollider(float HalfSize, float ZOffset);
 
@@ -53,9 +50,5 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Kage Character")
 	class UAnimMontage* EvadeMontage;
 
-	UPROPERTY(VisibleInstanceOnly, Category = "Kage Character")
-	float YOffset;
-
 	float ZCapsuleHeight;
-
 };
