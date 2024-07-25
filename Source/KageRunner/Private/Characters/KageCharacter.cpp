@@ -1,4 +1,4 @@
-// Vox Dei. All rights reserved.
+// Copyright Vox Dei. All Rights Reserved.
 
 #include "Characters/KageCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/BoxComponent.h"
+#include "Interfaces/Interact.h"
 
 AKageCharacter::AKageCharacter()
 {
@@ -32,6 +33,8 @@ AKageCharacter::AKageCharacter()
 void AKageCharacter::BeginPlay()
 {
 	Super::BeginPlay();	
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AKageCharacter::BeginOverlap);	// Binding BeginOverlap delegate
 }
 
 void AKageCharacter::Tick(float DeltaTime)
@@ -67,4 +70,15 @@ void AKageCharacter::UpdateBoxCollider(float HalfSize, float ZOffset)
 {
 	BoxCollider->SetBoxExtent(FVector(24.f, 24.f, HalfSize));
 	BoxCollider->SetRelativeLocation(FVector(0.f, 0.f, ZOffset));
+}
+
+void AKageCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	IInteract* InteractInterface = Cast<IInteract>(OtherActor);
+	if (InteractInterface) InteractInterface->Interact(this);
+}
+
+void AKageCharacter::InteractExample()
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("Interact example")));
 }

@@ -1,4 +1,4 @@
-// Vox Dei. All rights reserved.
+// Copyright Vox Dei. All Rights Reserved.
 
 #include "Items/Projectile.h"
 #include "Components/BoxComponent.h"
@@ -14,6 +14,9 @@ AProjectile::AProjectile()
 	BoxCollider = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
 	BoxCollider->SetCollisionResponseToAllChannels(ECR_Ignore);
 	BoxCollider->SetCollisionResponseToChannel(ECC_Destructible, ECR_Overlap);
+	BoxCollider->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::OnBeginOverlap);	// Binding OnComponentBeginOverlap delegate
+	BoxCollider->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);	// Binding OnComponentHit delegate
 	RootComponent = BoxCollider;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName(TEXT("StaticMeshComponent")));
@@ -33,8 +36,6 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &AProjectile::BeginOverlap);	// Binding BeginOverlap delegate
 }
 
 void AProjectile::Tick(float DeltaTime)
@@ -42,8 +43,10 @@ void AProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AProjectile::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{	
+void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("Overlap")));
+
 	if (FieldSystem)	// Generate impact for physical objects
 	{
 		URadialFalloff* RadialFalloff = NewObject<URadialFalloff>();
@@ -51,6 +54,11 @@ void AProjectile::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 
 		FieldSystem->ApplyPhysicsField(true, EFieldPhysicsType::Field_ExternalClusterStrain, nullptr, RadialFalloff);
 	}
+}
+
+void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("Hit")));
 
 	ProjectileMesh->SetSimulatePhysics(true);
 	ProjectileMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);

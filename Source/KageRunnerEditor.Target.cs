@@ -11,5 +11,7 @@ public class KageRunnerEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 
 		ExtraModuleNames.AddRange( new string[] { "KageRunner" } );
-	}
+
+        IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+    }
 }

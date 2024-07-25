@@ -1,4 +1,4 @@
-// Vox Dei. All rights reserved.
+// Copyright Vox Dei. All Rights Reserved.
 
 #pragma once
 
@@ -24,14 +24,19 @@ public:
 	void EvadeDown();
 	void LaunchProjectile();
 
+	void InteractExample();	// Temp function
+
 protected:
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintImplementableEvent)	// Temp
-	void OnBoxColliderUpdate();				// Temp
+	UFUNCTION()	// Using delegate OnComponentBeginOverlap from UPrimitiveComponent
+	virtual void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBoxColliderUpdate();	// Temp function
 
 private:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable)	// Temp callable
 	void UpdateBoxCollider(float HalfSize, float ZOffset);
 
 	// COMPONENTS

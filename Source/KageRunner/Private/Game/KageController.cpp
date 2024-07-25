@@ -1,4 +1,4 @@
-// Vox Dei. All rights reserved.
+// Copyright Vox Dei. All Rights Reserved.
 
 #include "Game/KageController.h"
 #include "Characters/KageCharacter.h"

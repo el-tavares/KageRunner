@@ -1,4 +1,4 @@
-// Vox Dei. All rights reserved.
+// Copyright Vox Dei. All Rights Reserved.
 
 #pragma once
 
@@ -6,9 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "KageController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class KAGERUNNER_API AKageController : public APlayerController
 {
