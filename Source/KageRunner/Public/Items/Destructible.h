@@ -24,4 +24,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	class UGeometryCollectionComponent* DestructibleGeo;
+
+private:
+	UFUNCTION()	// Using delegate OnChaosBreakEvent from UGeometryCollectionComponent
+	void OnBreak(const FChaosBreakEvent& BreakEvent);
+
+	UPROPERTY(EditDefaultsOnly, Category = "Destructible")
+	TArray<TSubclassOf<class APowerUp>> PowerUpClasses;
+
+	bool bBroken;
 };
