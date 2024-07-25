@@ -30,7 +30,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()	// Using delegate OnComponentBeginOverlap from UPrimitiveComponent
-	virtual void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBoxColliderUpdate();	// Temp function
