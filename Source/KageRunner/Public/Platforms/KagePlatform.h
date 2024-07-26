@@ -71,4 +71,5 @@ private:
 
 	bool bPlayerInside = false;
 	float RunningTime = 0.f;
+	TArray<AActor*> PlatformActors;
 };

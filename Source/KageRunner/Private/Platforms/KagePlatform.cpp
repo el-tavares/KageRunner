@@ -37,6 +37,7 @@ void AKagePlatform::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlatformActors.Add(this);
 	SetObstacles();
 }
 
@@ -70,7 +71,7 @@ void AKagePlatform::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 
 	bPlayerInside = false;
 
-	SetLifeSpan(RunningTime);
+	for (AActor* Actor : PlatformActors) Actor->SetLifeSpan(RunningTime);
 }
 
 void AKagePlatform::SetObstacles()
@@ -81,7 +82,7 @@ void AKagePlatform::SetObstacles()
 	{
 		for (FVector WallPosition : WallObstaclePositions)
 		{
-			if (World) World->SpawnActor<AObstacle>(WallObstacleClass, GetActorLocation() + WallPosition, FRotator::ZeroRotator);
+			if (World) PlatformActors.Add(World->SpawnActor<AObstacle>(WallObstacleClass, GetActorLocation() + WallPosition, FRotator::ZeroRotator));
 		}
 	}
 
@@ -89,7 +90,7 @@ void AKagePlatform::SetObstacles()
 	{
 		for (FVector LowerPosition : LowerObstaclePositions)
 		{
-			if (World) World->SpawnActor<AObstacle>(LowerObstacleClass, GetActorLocation() + LowerPosition, FRotator::ZeroRotator);
+			if (World) PlatformActors.Add(World->SpawnActor<AObstacle>(LowerObstacleClass, GetActorLocation() + LowerPosition, FRotator::ZeroRotator));
 		}
 	}
 
@@ -97,7 +98,7 @@ void AKagePlatform::SetObstacles()
 	{
 		for (FVector UpperPosition : UpperObstaclePositions)
 		{
-			if (World) World->SpawnActor<AObstacle>(UpperObstacleClass, GetActorLocation() + UpperPosition, FRotator::ZeroRotator);
+			if (World) PlatformActors.Add(World->SpawnActor<AObstacle>(UpperObstacleClass, GetActorLocation() + UpperPosition, FRotator::ZeroRotator));
 		}
 	}
 
@@ -105,7 +106,7 @@ void AKagePlatform::SetObstacles()
 	{
 		for (FVector  DestructiblePosition : DestructiblePositions)
 		{
-			if (World) World->SpawnActor<ADestructible>(DestructibleClass, GetActorLocation() + DestructiblePosition, FRotator::ZeroRotator);
+			if (World) PlatformActors.Add(World->SpawnActor<ADestructible>(DestructibleClass, GetActorLocation() + DestructiblePosition, FRotator::ZeroRotator));
 		}
 	}
 }

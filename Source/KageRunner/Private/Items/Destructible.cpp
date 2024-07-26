@@ -54,7 +54,7 @@ void ADestructible::OnBreak(const FChaosBreakEvent& BreakEvent)
 
 		const int Selection = FMath::RandRange(0, PowerUpClasses.Num() - 1);
 
-		if (PowerUpClasses[Selection]) World->SpawnActor<APowerUp>(PowerUpClasses[Selection], LocationToSpawn, GetActorRotation());
+		if (PowerUpClasses[Selection]) (World->SpawnActor<APowerUp>(PowerUpClasses[Selection], LocationToSpawn, GetActorRotation()))->SetLifeSpan(3.f);
 	}
 
 	bBroken = true;
