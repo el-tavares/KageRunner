@@ -35,7 +35,7 @@ AKageCharacter::AKageCharacter()
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -ZCapsuleHeight), FRotator(0.f, -90.f, 0.f));	// Set mesh to correct position and rotation
 
-	ADD_PROPERTY_SECTION("Kage Character");
+	//ADD_PROPERTY_SECTION("Kage Character");
 }
 
 void AKageCharacter::BeginPlay()

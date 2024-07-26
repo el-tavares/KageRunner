@@ -28,7 +28,7 @@ ADestructible::ADestructible()
 	BoxCollider->SetCollisionResponseToAllChannels(ECR_Ignore);
 	BoxCollider->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
-	ADD_PROPERTY_SECTION("Destructible");
+	//ADD_PROPERTY_SECTION("Destructible");
 }
 
 void ADestructible::BeginPlay()

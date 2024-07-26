@@ -30,7 +30,7 @@ AKagePlatform::AKagePlatform()
 	BoxTrigger->OnComponentBeginOverlap.AddDynamic(this, &AKagePlatform::OnBeginOverlap);
 	BoxTrigger->OnComponentEndOverlap.AddDynamic(this, &AKagePlatform::OnEndOverlap);
 
-	ADD_PROPERTY_SECTION("Platform");
+	//ADD_PROPERTY_SECTION("Platform");
 }
 
 void AKagePlatform::BeginPlay()
