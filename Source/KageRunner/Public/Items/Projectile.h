@@ -37,9 +37,5 @@ private:
 
 	class UFieldSystemComponent* FieldSystem;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	float ImpactMagnitude = 5000000.f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-	float ImpactRadius = 100.f;
+	float ImpactMagnitude = 5000000.f, ImpactRadius = 100.f;
 };

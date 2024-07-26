@@ -2,7 +2,9 @@
 
 #include "Items/Destructible.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Components/BoxComponent.h"
 #include "Items/PowerUp.h"
+#include "KageRunner/ModuleEditor.h"
 
 ADestructible::ADestructible()
 {
@@ -20,6 +22,13 @@ ADestructible::ADestructible()
 	DestructibleGeo->SetCollisionResponseToChannel(ECC_Destructible, ECR_Block);
 	DestructibleGeo->bNotifyBreaks = true;
 	DestructibleGeo->OnChaosBreakEvent.AddDynamic(this, &ADestructible::OnBreak);
+
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
+	BoxCollider->SetupAttachment(GetRootComponent());
+	BoxCollider->SetCollisionResponseToAllChannels(ECR_Ignore);
+	BoxCollider->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+
+	ADD_PROPERTY_SECTION("Destructible");
 }
 
 void ADestructible::BeginPlay()
@@ -35,6 +44,8 @@ void ADestructible::Tick(float DeltaTime)
 void ADestructible::OnBreak(const FChaosBreakEvent& BreakEvent)
 {
 	if (bBroken) return;
+
+	BoxCollider->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 
 	UWorld* World = GetWorld();
 	if (World && !PowerUpClasses.IsEmpty())

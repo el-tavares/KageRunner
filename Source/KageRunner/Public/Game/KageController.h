@@ -31,9 +31,6 @@ private:
 
 	class AKageCharacter* KageCharacter;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Kage Controller")
-	TSubclassOf<class AProjectile> ProjectileClass;
-
 	float Speed = 100.f;
 	float YOffset;
 };

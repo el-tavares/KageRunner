@@ -2,7 +2,6 @@
 
 #include "Game/KageController.h"
 #include "Characters/KageCharacter.h"
-#include "Items/Projectile.h"
 
 void AKageController::BeginPlayingState()
 {
@@ -71,15 +70,5 @@ void AKageController::EvadeDown()
 
 void AKageController::LaunchProjectile()
 {
-	UWorld* World = GetWorld();
-	if (World && ProjectileClass && KageCharacter)
-	{
-		FVector LocationToSpawn = KageCharacter->GetActorLocation();
-		LocationToSpawn += KageCharacter->GetActorForwardVector() * 100.f;	// Add forward offset
-
-		AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, LocationToSpawn, FRotator(0.f));
-		Projectile->SetLifeSpan(3.f);
-
-		KageCharacter->LaunchProjectile();
-	}
+	if (KageCharacter) KageCharacter->LaunchProjectile();
 }

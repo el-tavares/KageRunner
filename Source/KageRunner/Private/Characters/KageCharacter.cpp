@@ -7,6 +7,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Components/BoxComponent.h"
 #include "Interfaces/Interact.h"
+#include "KageRunner/ModuleEditor.h"
+#include "Items/Projectile.h"
 
 AKageCharacter::AKageCharacter()
 {
@@ -32,6 +34,8 @@ AKageCharacter::AKageCharacter()
 	UpdateBoxCollider(ZCapsuleHeight, 0.f);
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -ZCapsuleHeight), FRotator(0.f, -90.f, 0.f));	// Set mesh to correct position and rotation
+
+	ADD_PROPERTY_SECTION("Kage Character");
 }
 
 void AKageCharacter::BeginPlay()
@@ -66,6 +70,15 @@ void AKageCharacter::EvadeDown()
 
 void AKageCharacter::LaunchProjectile()
 {
+	UWorld* World = GetWorld();
+	if (World && ProjectileClass)
+	{
+		FVector LocationToSpawn = GetActorLocation();
+		LocationToSpawn += GetActorForwardVector() * 100.f;	// Add forward offset
+
+		AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, LocationToSpawn, FRotator(0.f));
+		Projectile->SetLifeSpan(5.f);
+	}
 }
 
 void AKageCharacter::UpdateBoxCollider(float HalfSize, float ZOffset)

@@ -19,13 +19,17 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+
+private:
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SceneRoot;
 
 	UPROPERTY(VisibleAnywhere)
 	class UGeometryCollectionComponent* DestructibleGeo;
 
-private:
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* BoxCollider;
+
 	UFUNCTION()	// Using delegate OnChaosBreakEvent from UGeometryCollectionComponent
 	void OnBreak(const FChaosBreakEvent& BreakEvent);
 

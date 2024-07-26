@@ -55,5 +55,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Kage Character")
 	class UAnimMontage* EvadeMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Kage Character")
+	TSubclassOf<class AProjectile> ProjectileClass;
+
 	float ZCapsuleHeight;
 };
