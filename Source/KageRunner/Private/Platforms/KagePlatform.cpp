@@ -25,88 +25,59 @@ AKagePlatform::AKagePlatform()
 
 	BoxTrigger = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
 	BoxTrigger->SetupAttachment(GetRootComponent());
+	BoxTrigger->SetBoxExtent(FVector(1500.f, 300.f, 300.f));
 	BoxTrigger->SetCollisionResponseToAllChannels(ECR_Ignore);
 	BoxTrigger->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	BoxTrigger->OnComponentBeginOverlap.AddDynamic(this, &AKagePlatform::OnBeginOverlap);
 	BoxTrigger->OnComponentEndOverlap.AddDynamic(this, &AKagePlatform::OnEndOverlap);
 
-	//ADD_PROPERTY_SECTION("Platform");
+	ADD_PROPERTY_SECTION("Platform");
 }
 
 void AKagePlatform::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlatformActors.Add(this);
-	SetObstacles();
+	if (bIsFirstPlatform)
+	{
+		bPlayerInside = true;
+		SpawnPlatform();
+	}
 }
 
 void AKagePlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bPlayerInside) RunningTime += DeltaTime;
+	if (bPlayerInside) RunningTime += DeltaTime;	// Start counting time when play is inside
 }
 
 void AKagePlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("Begin overlap")));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("Begin overlap")));
 
 	bPlayerInside = true;
+	SpawnPlatform();
+}
 
+void AKagePlatform::SpawnPlatform()
+{
 	UWorld* World = GetWorld();
-	if (World && !PlatformClasses.IsEmpty())
+
+	if (World && !PlatformClasses.IsEmpty())	// Check if world is valid and platform classes is not empty
 	{
-		FVector LocationToSpawn = GetActorLocation() + FVector(PlatformDistance * PlatformCount, 0.f, 0.f);
+		FVector LocationToSpawn = GetActorLocation() + FVector(PlatformDistance * PlatformCount, 0.f, 0.f);	// Set spawn location with offset
 
-		const int Selection = FMath::RandRange(0, PlatformClasses.Num() - 1);
+		const int Selection = FMath::RandRange(0, PlatformClasses.Num() - 1);	// Select platform class
 
-		if (PlatformClasses[Selection]) World->SpawnActor<AKagePlatform>(PlatformClasses[Selection], LocationToSpawn, GetActorRotation());
+		if (PlatformClasses[Selection]) World->SpawnActor<AKagePlatform>(PlatformClasses[Selection], LocationToSpawn, GetActorRotation());	// Spawn selected platform
 	}
 }
 
 void AKagePlatform::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("End overlap")));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("End overlap")));
 
 	bPlayerInside = false;
-
-	for (AActor* Actor : PlatformActors) Actor->SetLifeSpan(RunningTime);
-}
-
-void AKagePlatform::SetObstacles()
-{
-	UWorld* World = GetWorld();
-
-	if (WallObstacleClass && !WallObstaclePositions.IsEmpty())
-	{
-		for (FVector WallPosition : WallObstaclePositions)
-		{
-			if (World) PlatformActors.Add(World->SpawnActor<AObstacle>(WallObstacleClass, GetActorLocation() + WallPosition, FRotator::ZeroRotator));
-		}
-	}
-
-	if (LowerObstacleClass && !LowerObstaclePositions.IsEmpty())
-	{
-		for (FVector LowerPosition : LowerObstaclePositions)
-		{
-			if (World) PlatformActors.Add(World->SpawnActor<AObstacle>(LowerObstacleClass, GetActorLocation() + LowerPosition, FRotator::ZeroRotator));
-		}
-	}
-
-	if (UpperObstacleClass && !UpperObstaclePositions.IsEmpty())
-	{
-		for (FVector UpperPosition : UpperObstaclePositions)
-		{
-			if (World) PlatformActors.Add(World->SpawnActor<AObstacle>(UpperObstacleClass, GetActorLocation() + UpperPosition, FRotator::ZeroRotator));
-		}
-	}
-
-	if (DestructibleClass && !DestructiblePositions.IsEmpty())
-	{
-		for (FVector  DestructiblePosition : DestructiblePositions)
-		{
-			if (World) PlatformActors.Add(World->SpawnActor<ADestructible>(DestructibleClass, GetActorLocation() + DestructiblePosition, FRotator::ZeroRotator));
-		}
-	}
+	SetLifeSpan(RunningTime);	// Destroy by the time player spent inside
 }

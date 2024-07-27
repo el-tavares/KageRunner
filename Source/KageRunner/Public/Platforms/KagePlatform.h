@@ -25,6 +25,8 @@ protected:
 	virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
+	void SpawnPlatform();
+
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SceneRoot;
 
@@ -34,42 +36,16 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* BoxTrigger;
 
-	UPROPERTY(EditAnywhere, Category = "Platform")
+	UPROPERTY(EditAnywhere, Category = "Platform")	// Platform classes to spawn next
 	TArray<TSubclassOf<AKagePlatform>> PlatformClasses;
 
-	UPROPERTY(EditAnywhere, Category = "Platform")	// Default is 10m (1000cm)
-	float PlatformDistance = 1000.f;	
+	UPROPERTY(EditInstanceOnly, Category = "Platform")	// Is the first platform in the world
+	bool bIsFirstPlatform = false;
 
-	UPROPERTY(VisibleAnywhere, Category = "Platform")	// Default is 3 platforms in world
-	int32 PlatformCount = 3;	
-
-	UPROPERTY(EditAnywhere, Category = "Platform", meta = (MakeEditWidget))	// Positions that walls will be spawned
-	TArray<FVector> WallObstaclePositions;
-
-	UPROPERTY(EditAnywhere, Category = "Platform", meta = (MakeEditWidget))	// Positions that lower obstacles will be spawned
-	TArray<FVector> LowerObstaclePositions;
-
-	UPROPERTY(EditAnywhere, Category = "Platform", meta = (MakeEditWidget))	// Positions that upper obstacles will be spawned
-	TArray<FVector> UpperObstaclePositions;
-
-	UPROPERTY(EditAnywhere, Category = "Platform", meta = (MakeEditWidget))	// Positions that destructibles will be spawned
-	TArray<FVector> DestructiblePositions;
-
-	UPROPERTY(EditAnywhere, Category = "Platform")
-	TSubclassOf<class AObstacle> WallObstacleClass;
-
-	UPROPERTY(EditAnywhere, Category = "Platform")
-	TSubclassOf<class AObstacle> LowerObstacleClass;
-
-	UPROPERTY(EditAnywhere, Category = "Platform")
-	TSubclassOf<class AObstacle> UpperObstacleClass;
-
-	UPROPERTY(EditAnywhere, Category = "Platform")
-	TSubclassOf<class ADestructible> DestructibleClass;
-
-	void SetObstacles();
+	UPROPERTY(EditInstanceOnly, Category = "Platform")	// Number of platforms in the world
+	int32 PlatformCount = 3;
 
 	bool bPlayerInside = false;
 	float RunningTime = 0.f;
-	TArray<AActor*> PlatformActors;
+	const float PlatformDistance = 3000.f;
 };
