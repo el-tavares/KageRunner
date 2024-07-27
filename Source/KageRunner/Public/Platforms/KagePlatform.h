@@ -13,6 +13,7 @@ class KAGERUNNER_API AKagePlatform : public AActor
 	
 public:	
 	AKagePlatform();
+
 	virtual void Tick(float DeltaTime) override;
 
 protected:
@@ -21,11 +22,8 @@ protected:
 	UFUNCTION()	// Using delegate OnComponentBeginOverlap from UPrimitiveComponent
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION()	// Using delegate OnComponentEndOverlap from UPrimitiveComponent
-	virtual void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 private:
-	void SpawnPlatform();
+	void SpawnPlatform(float XOffset);
 
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SceneRoot;
@@ -36,16 +34,17 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* BoxTrigger;
 
-	UPROPERTY(EditAnywhere, Category = "Platform")	// Platform classes to spawn next
+	UPROPERTY(EditAnywhere, Category = "Platform")
 	TArray<TSubclassOf<AKagePlatform>> PlatformClasses;
 
-	UPROPERTY(EditInstanceOnly, Category = "Platform")	// Is the first platform in the world
+	UPROPERTY(EditInstanceOnly, Category = "Platform")
 	bool bIsFirstPlatform = false;
 
-	UPROPERTY(EditInstanceOnly, Category = "Platform")	// Number of platforms in the world
-	int32 PlatformCount = 3;
+	float PlatformSize = 3000.f;
 
-	bool bPlayerInside = false;
-	float RunningTime = 0.f;
-	const float PlatformDistance = 3000.f;
+	int32 PlatformCount = 4;
+
+	float DestroyXLocation = -5000.f;
+
+	bool bPlayerOverlapped = false;
 };

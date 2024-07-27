@@ -41,11 +41,11 @@ private:
 
 	// COMPONENTS
 
-	UPROPERTY(VisibleAnywhere)
+	/*UPROPERTY(VisibleAnywhere)
 	class USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* Camera;
+	class UCameraComponent* Camera;*/
 
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* BoxCollider;

@@ -13,8 +13,13 @@ ADestructible::ADestructible()
 	SceneRoot = CreateDefaultSubobject<USceneComponent>(FName(TEXT("SceneComponent")));
 	RootComponent = SceneRoot;
 
+	BoxCollider = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
+	BoxCollider->SetupAttachment(GetRootComponent());
+	BoxCollider->SetCollisionResponseToAllChannels(ECR_Ignore);
+	BoxCollider->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+
 	DestructibleGeo = CreateDefaultSubobject<UGeometryCollectionComponent>(FName(TEXT("GeometryCollection")));
-	DestructibleGeo->SetupAttachment(GetRootComponent());
+	DestructibleGeo->SetupAttachment(BoxCollider);
 	DestructibleGeo->SetGenerateOverlapEvents(true);
 	DestructibleGeo->SetCollisionResponseToAllChannels(ECR_Ignore);
 	DestructibleGeo->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
@@ -22,11 +27,6 @@ ADestructible::ADestructible()
 	DestructibleGeo->SetCollisionResponseToChannel(ECC_Destructible, ECR_Block);
 	DestructibleGeo->bNotifyBreaks = true;
 	DestructibleGeo->OnChaosBreakEvent.AddDynamic(this, &ADestructible::OnBreak);
-
-	BoxCollider = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
-	BoxCollider->SetupAttachment(GetRootComponent());
-	BoxCollider->SetCollisionResponseToAllChannels(ECR_Ignore);
-	BoxCollider->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
 	//ADD_PROPERTY_SECTION("Destructible");
 }

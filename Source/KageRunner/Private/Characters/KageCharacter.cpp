@@ -17,14 +17,14 @@ AKageCharacter::AKageCharacter()
 	ZCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AKageCharacter::OnBeginOverlap);	// Binding OnBeginOverlap delegate
 
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(FName(TEXT("SpringArmComponent")));
+	/*SpringArm = CreateDefaultSubobject<USpringArmComponent>(FName(TEXT("SpringArmComponent")));
 	SpringArm->SetupAttachment(GetRootComponent());
 	SpringArm->TargetArmLength = 520.f;
 	SpringArm->SocketOffset = FVector(0.f, 0.f, 180.f);
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(FName(TEXT("CameraComponent")));
 	Camera->SetupAttachment(SpringArm);
-	Camera->SetRelativeRotation(FRotator(15.f, 0.f, 0.f));
+	Camera->SetRelativeRotation(FRotator(15.f, 0.f, 0.f));*/
 
 	BoxCollider = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
 	BoxCollider->SetupAttachment(GetRootComponent());
@@ -34,6 +34,8 @@ AKageCharacter::AKageCharacter()
 	UpdateBoxCollider(ZCapsuleHeight, 0.f);
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -ZCapsuleHeight), FRotator(0.f, -90.f, 0.f));	// Set mesh to correct position and rotation
+
+	Tags.Add(FName(TEXT("Player")));
 
 	//ADD_PROPERTY_SECTION("Kage Character");
 }

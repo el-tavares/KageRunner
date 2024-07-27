@@ -23,7 +23,8 @@ void AKageController::HandleCharacterMovement(float DeltaTime)
 {
 	if (KageCharacter)
 	{
-		KageCharacter->AddMovementInput(FVector(Speed * DeltaTime, 0.f, 0.f));	// Add forward movement infinitely
+		//KageCharacter->AddMovementInput(FVector(Speed * DeltaTime, 0.f, 0.f));	// Add forward movement infinitely
+		KageCharacter->GetRootComponent()->AddLocalOffset(FVector(300.f * DeltaTime, 0.f, 0.f));
 
 		FVector CurrentPostion = KageCharacter->GetActorLocation();
 
