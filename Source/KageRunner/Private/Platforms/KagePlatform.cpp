@@ -6,6 +6,7 @@
 #include "KageRunner/ModuleEditor.h"
 #include "Items/Obstacle.h"
 #include "Items/Destructible.h"
+#include "PackedLevelActor/PackedLevelActor.h"
 
 AKagePlatform::AKagePlatform()
 {
@@ -36,14 +37,18 @@ void AKagePlatform::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ActorsToDestroy.Add(this);
+
 	if (bIsFirstPlatform) for (int i = 1; i < PlatformCount; i++) SpawnPlatform(PlatformSize * i);	// Generate count platforms minus one (first platform already exist)
+
+	SpawnOutsideActors();
 }
 
 void AKagePlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (GetActorLocation().X < DestroyXLocation) Destroy();
+	if (GetActorLocation().X < DestroyXLocation) for (auto& Actor : ActorsToDestroy) Actor->Destroy();
 
 	GetRootComponent()->AddLocalOffset(FVector(-300.f * DeltaTime, 0.f, 0.f));
 }
@@ -70,5 +75,38 @@ void AKagePlatform::SpawnPlatform(float XOffset)
 		const int Selection = FMath::RandRange(0, PlatformClasses.Num() - 1);	// Select platform class
 
 		if (PlatformClasses[Selection]) World->SpawnActor<AKagePlatform>(PlatformClasses[Selection], LocationToSpawn, GetActorRotation());	// Spawn selected platform
+	}
+}
+
+void AKagePlatform::SpawnOutsideActors()
+{
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	if (!OutsideActors.IsEmpty() && !OutsideActorsLocation.IsEmpty())	// Check if packed actor classes and locations are not empty
+	{
+		for (auto& LocationToSpawn : OutsideActorsLocation)
+		{
+			const int Selection = FMath::RandRange(0, OutsideActors.Num() - 1);	// Select packed actor class
+
+			if (OutsideActors[Selection])
+			{
+				const bool Select = FMath::RandRange(0, 1) == 1;
+				FRotator SpawnRotation = Select ? GetActorRotation() : GetActorRotation() + FRotator(0.f, 180.f, 0.f);	// Select rotation
+
+				APackedLevelActor* PackedActor = World->SpawnActor<APackedLevelActor>(OutsideActors[Selection], LocationToSpawn, SpawnRotation);	// Spawn selected packed actor
+				PackedActor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+
+				ActorsToDestroy.Add(PackedActor);
+			}
+		}			
+	}
+
+	if (OutsideScene)
+	{
+		APackedLevelActor* PackedActor = World->SpawnActor<APackedLevelActor>(OutsideScene, GetActorLocation(), GetActorRotation());	// Spawn outside scene packed actor
+		PackedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+
+		ActorsToDestroy.Add(PackedActor);
 	}
 }

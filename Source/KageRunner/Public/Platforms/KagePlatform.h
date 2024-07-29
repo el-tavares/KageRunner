@@ -24,6 +24,7 @@ protected:
 
 private:
 	void SpawnPlatform(float XOffset);
+	void SpawnOutsideActors();
 
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* SceneRoot;
@@ -47,4 +48,15 @@ private:
 	float DestroyXLocation = -5000.f;
 
 	bool bPlayerOverlapped = false;
+
+	UPROPERTY(EditAnywhere, Category = "Platform")
+	TArray<TSubclassOf<class APackedLevelActor>> OutsideActors;
+
+	UPROPERTY(EditAnywhere, Category = "Platform", meta = (MakeEditWidget))
+	TArray<FVector> OutsideActorsLocation;
+
+	TArray<AActor*> ActorsToDestroy;
+
+	UPROPERTY(EditAnywhere, Category = "Platform")
+	TSubclassOf<class APackedLevelActor> OutsideScene;
 };
