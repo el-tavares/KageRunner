@@ -98,9 +98,11 @@ void AKagePlatform::SpawnOutsideActors()
 				FRotator SpawnRotation = Select ? GetActorRotation() : GetActorRotation() + FRotator(0.f, 180.f, 0.f);	// Select rotation
 
 				APackedLevelActor* PackedActor = World->SpawnActor<APackedLevelActor>(OutsideActors[Selection], LocationToSpawn, SpawnRotation);	// Spawn selected packed actor
-				PackedActor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
-
-				ActorsToDestroy.Add(PackedActor);
+				if (PackedActor)
+				{
+					PackedActor->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+					ActorsToDestroy.Add(PackedActor);
+				}
 			}
 		}			
 	}
@@ -108,9 +110,11 @@ void AKagePlatform::SpawnOutsideActors()
 	if (OutsideScene)	// Check if scenario class is valid
 	{
 		APackedLevelActor* PackedActor = World->SpawnActor<APackedLevelActor>(OutsideScene, GetActorLocation(), GetActorRotation());	// Spawn outside scene packed actor
-		PackedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-
-		ActorsToDestroy.Add(PackedActor);
+		if (PackedActor)
+		{
+			PackedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+			ActorsToDestroy.Add(PackedActor);
+		}
 	}
 
 	if (!InsideObstacles.IsEmpty())	// Check if obstacle classes are not a empty array
@@ -125,9 +129,11 @@ void AKagePlatform::SpawnOutsideActors()
 			PackedObstaclesSpawn += GetActorLocation();	// Update offset from this actor location
 
 			APackedObstacles* PackedObstacle = World->SpawnActor<APackedObstacles>(InsideObstacles[Selection], PackedObstaclesSpawn, SpawnRotation);
-			PackedObstacle->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-
-			ActorsToDestroy.Add(PackedObstacle);
+			if (PackedObstacle)
+			{
+				PackedObstacle->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+				ActorsToDestroy.Add(PackedObstacle);
+			}
 		}
 	}
 }

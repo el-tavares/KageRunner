@@ -57,8 +57,11 @@ void ADestructible::OnBreak(const FChaosBreakEvent& BreakEvent)
 		if (PowerUpClasses[Selection])
 		{
 			APowerUp* PowerUp = World->SpawnActor<APowerUp>(PowerUpClasses[Selection], LocationToSpawn, GetActorRotation());
-			PowerUp->SetLifeSpan(4.f);
-			PowerUp->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+			if (PowerUp)
+			{
+				PowerUp->SetLifeSpan(4.f);	
+				PowerUp->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+			}
 		}			
 	}
 
