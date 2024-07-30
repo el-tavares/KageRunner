@@ -16,7 +16,8 @@ ADestructible::ADestructible()
 	BoxCollider = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
 	BoxCollider->SetupAttachment(GetRootComponent());
 	BoxCollider->SetCollisionResponseToAllChannels(ECR_Ignore);
-	BoxCollider->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+	BoxCollider->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
+	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &ADestructible::OnBeginOverlap);
 
 	DestructibleGeo = CreateDefaultSubobject<UGeometryCollectionComponent>(FName(TEXT("GeometryCollection")));
 	DestructibleGeo->SetupAttachment(BoxCollider);
@@ -25,6 +26,7 @@ ADestructible::ADestructible()
 	DestructibleGeo->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	DestructibleGeo->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Overlap);
 	DestructibleGeo->SetCollisionResponseToChannel(ECC_Destructible, ECR_Block);
+	DestructibleGeo->SetSimulatePhysics(false);
 	DestructibleGeo->bNotifyBreaks = true;
 	DestructibleGeo->OnChaosBreakEvent.AddDynamic(this, &ADestructible::OnBreak);
 
@@ -45,8 +47,6 @@ void ADestructible::OnBreak(const FChaosBreakEvent& BreakEvent)
 {
 	if (bBroken) return;
 
-	BoxCollider->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-
 	UWorld* World = GetWorld();
 	if (World && !PowerUpClasses.IsEmpty())
 	{
@@ -54,8 +54,18 @@ void ADestructible::OnBreak(const FChaosBreakEvent& BreakEvent)
 
 		const int Selection = FMath::RandRange(0, PowerUpClasses.Num() - 1);
 
-		if (PowerUpClasses[Selection]) (World->SpawnActor<APowerUp>(PowerUpClasses[Selection], LocationToSpawn, GetActorRotation()))->SetLifeSpan(3.f);
+		if (PowerUpClasses[Selection])
+		{
+			APowerUp* PowerUp = World->SpawnActor<APowerUp>(PowerUpClasses[Selection], LocationToSpawn, GetActorRotation());
+			PowerUp->SetLifeSpan(4.f);
+			PowerUp->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		}			
 	}
 
 	bBroken = true;
+}
+
+void ADestructible::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	DestructibleGeo->SetSimulatePhysics(true);
 }

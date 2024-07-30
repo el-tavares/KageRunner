@@ -7,6 +7,7 @@
 #include "Items/Obstacle.h"
 #include "Items/Destructible.h"
 #include "PackedLevelActor/PackedLevelActor.h"
+#include "Platforms/PackedObstacles.h"
 
 AKagePlatform::AKagePlatform()
 {
@@ -17,12 +18,14 @@ AKagePlatform::AKagePlatform()
 
 	FloorMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName(TEXT("StaticMeshComponent")));
 	FloorMesh->SetupAttachment(GetRootComponent());
+	FloorMesh->SetGenerateOverlapEvents(false);
 	FloorMesh->SetCollisionObjectType(ECC_WorldStatic);
-	FloorMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	/*FloorMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 	FloorMesh->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	FloorMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
 	FloorMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
-	FloorMesh->SetCollisionResponseToChannel(ECC_Destructible, ECR_Block);
+	FloorMesh->SetCollisionResponseToChannel(ECC_Destructible, ECR_Block);*/
+
 
 	BoxTrigger = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
 	BoxTrigger->SetupAttachment(GetRootComponent());
@@ -50,7 +53,7 @@ void AKagePlatform::Tick(float DeltaTime)
 
 	if (GetActorLocation().X < DestroyXLocation) for (auto& Actor : ActorsToDestroy) Actor->Destroy();
 
-	GetRootComponent()->AddLocalOffset(FVector(-300.f * DeltaTime, 0.f, 0.f));
+	GetRootComponent()->AddLocalOffset(FVector(-500.f * DeltaTime, 0.f, 0.f));	// Add backward movement infinitely
 }
 
 void AKagePlatform::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -102,11 +105,29 @@ void AKagePlatform::SpawnOutsideActors()
 		}			
 	}
 
-	if (OutsideScene)
+	if (OutsideScene)	// Check if scenario class is valid
 	{
 		APackedLevelActor* PackedActor = World->SpawnActor<APackedLevelActor>(OutsideScene, GetActorLocation(), GetActorRotation());	// Spawn outside scene packed actor
 		PackedActor->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 
 		ActorsToDestroy.Add(PackedActor);
+	}
+
+	if (!InsideObstacles.IsEmpty())	// Check if obstacle classes are not a empty array
+	{
+		const int Selection = FMath::RandRange(0, InsideObstacles.Num() - 1);	// Select packed obstacle class
+
+		if (InsideObstacles[Selection])
+		{
+			const bool Select = FMath::RandRange(0, 1) == 1;
+			FRotator SpawnRotation = Select ? GetActorRotation() : GetActorRotation() + FRotator(0.f, 180.f, 0.f);	// Select rotation
+
+			PackedObstaclesSpawn += GetActorLocation();	// Update offset from this actor location
+
+			APackedObstacles* PackedObstacle = World->SpawnActor<APackedObstacles>(InsideObstacles[Selection], PackedObstaclesSpawn, SpawnRotation);
+			PackedObstacle->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+
+			ActorsToDestroy.Add(PackedObstacle);
+		}
 	}
 }

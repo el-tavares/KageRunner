@@ -41,11 +41,11 @@ private:
 	UPROPERTY(EditInstanceOnly, Category = "Platform")
 	bool bIsFirstPlatform = false;
 
-	float PlatformSize = 3000.f;
+	const float PlatformSize = 3000.f;
 
-	int32 PlatformCount = 4;
+	const int32 PlatformCount = 4;
 
-	float DestroyXLocation = -5000.f;
+	const float DestroyXLocation = -5000.f;
 
 	bool bPlayerOverlapped = false;
 
@@ -59,4 +59,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Platform")
 	TSubclassOf<class APackedLevelActor> OutsideScene;
+
+	UPROPERTY(EditAnywhere, Category = "Platform")
+	TArray<TSubclassOf<class APackedObstacles>> InsideObstacles;
+
+	FVector PackedObstaclesSpawn = FVector(1500.f, 300.f, 0.f);
 };
