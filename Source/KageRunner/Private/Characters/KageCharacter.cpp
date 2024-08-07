@@ -17,15 +17,6 @@ AKageCharacter::AKageCharacter()
 	ZCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AKageCharacter::OnBeginOverlap);	// Binding OnBeginOverlap delegate
 
-	/*SpringArm = CreateDefaultSubobject<USpringArmComponent>(FName(TEXT("SpringArmComponent")));
-	SpringArm->SetupAttachment(GetRootComponent());
-	SpringArm->TargetArmLength = 520.f;
-	SpringArm->SocketOffset = FVector(0.f, 0.f, 180.f);
-
-	Camera = CreateDefaultSubobject<UCameraComponent>(FName(TEXT("CameraComponent")));
-	Camera->SetupAttachment(SpringArm);
-	Camera->SetRelativeRotation(FRotator(15.f, 0.f, 0.f));*/
-
 	BoxCollider = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
 	BoxCollider->SetupAttachment(GetRootComponent());
 	BoxCollider->SetCollisionObjectType(ECC_Vehicle);
@@ -37,7 +28,7 @@ AKageCharacter::AKageCharacter()
 
 	Tags.Add(FName(TEXT("Player")));
 
-	//ADD_PROPERTY_SECTION("Kage Character");
+	ADD_PROPERTY_SECTION("Kage Character");
 }
 
 void AKageCharacter::BeginPlay()
@@ -53,25 +44,56 @@ void AKageCharacter::Tick(float DeltaTime)
 void AKageCharacter::EvadeUp()
 {
 	UpdateBoxCollider(ZCapsuleHeight / 2.f, (ZCapsuleHeight / 2.f) + 20.f);
-	OnBoxColliderUpdate();	// Temp
+	PlayMontage(EvadeMontage, FName(TEXT("EvadeUp")));
 }
 
 void AKageCharacter::EvadeLeft()
 {	
+	PlayMontage(EvadeMontage, FName(TEXT("EvadeLeft")));
 }
 
 void AKageCharacter::EvadeRight()
 {	
+	PlayMontage(EvadeMontage, FName(TEXT("EvadeRight")));
 }
 
 void AKageCharacter::EvadeDown()
 {
 	UpdateBoxCollider(ZCapsuleHeight / 2.f, -(ZCapsuleHeight / 2.f));
-	OnBoxColliderUpdate();	// Temp
+	PlayMontage(EvadeMontage, FName(TEXT("EvadeDown")));
+}
+
+void AKageCharacter::PlayMontage(UAnimMontage* Montage, FName SectionName)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && Montage)
+	{
+		AnimInstance->Montage_Play(Montage);
+		AnimInstance->Montage_JumpToSection(SectionName);
+
+		FOnMontageEnded EndMontage;	// Create end montage delegate struct
+		EndMontage.BindUObject(this, &AKageCharacter::OnEvadeEnd);	// Bind the event
+		AnimInstance->Montage_SetEndDelegate(EndMontage, Montage);	// Set delegate
+	}
+}
+
+void AKageCharacter::OnEvadeEnd(UAnimMontage* AnimMontage, bool Interrupted)
+{
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("Montage ended")));
+
+	if (!Interrupted) UpdateBoxCollider(ZCapsuleHeight, 0.f);
+}
+
+void AKageCharacter::UpdateBoxCollider(float HalfSize, float ZOffset)
+{
+	BoxCollider->SetBoxExtent(FVector(24.f, 24.f, HalfSize));
+	BoxCollider->SetRelativeLocation(FVector(0.f, 0.f, ZOffset));
 }
 
 void AKageCharacter::LaunchProjectile()
 {
+	PlayMontage(ThrowKunaiMontage, FName(TEXT("Default")));
+
 	UWorld* World = GetWorld();
 	if (World && ProjectileClass)
 	{
@@ -83,12 +105,6 @@ void AKageCharacter::LaunchProjectile()
 	}
 }
 
-void AKageCharacter::UpdateBoxCollider(float HalfSize, float ZOffset)
-{
-	BoxCollider->SetBoxExtent(FVector(24.f, 24.f, HalfSize));
-	BoxCollider->SetRelativeLocation(FVector(0.f, 0.f, ZOffset));
-}
-
 void AKageCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	IInteract* InteractInterface = Cast<IInteract>(OtherActor);
@@ -97,5 +113,5 @@ void AKageCharacter::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 void AKageCharacter::InteractExample()
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("Interact example")));
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::White, FString(TEXT("Interact example")));
 }

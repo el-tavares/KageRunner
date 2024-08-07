@@ -16,7 +16,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	// ACTIONS
+	UFUNCTION()	// Using delegate FOnMontageEnded from UAnimInstance
+	void OnEvadeEnd(class UAnimMontage* AnimMontage, bool Interrupted);
 
 	void EvadeUp();
 	void EvadeLeft();
@@ -32,28 +33,20 @@ protected:
 	UFUNCTION()	// Using delegate OnComponentBeginOverlap from UPrimitiveComponent
 	virtual void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnBoxColliderUpdate();	// Temp function
-
 private:
 	UFUNCTION(BlueprintCallable)	// Temp callable
 	void UpdateBoxCollider(float HalfSize, float ZOffset);
 
-	// COMPONENTS
-
-	/*UPROPERTY(VisibleAnywhere)
-	class USpringArmComponent* SpringArm;
-
-	UPROPERTY(VisibleAnywhere)
-	class UCameraComponent* Camera;*/
+	void PlayMontage(class UAnimMontage* Montage, FName SectionName);
 
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* BoxCollider;
 
-	// OTHERS
-
 	UPROPERTY(EditDefaultsOnly, Category = "Kage Character")
 	class UAnimMontage* EvadeMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Kage Character")
+	class UAnimMontage* ThrowKunaiMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Kage Character")
 	TSubclassOf<class AProjectile> ProjectileClass;
