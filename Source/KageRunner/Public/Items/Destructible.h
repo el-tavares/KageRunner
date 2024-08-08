@@ -38,5 +38,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Destructible")
 	TArray<TSubclassOf<class APowerUp>> PowerUpClasses;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Destructible")
+	class USoundBase* BreakSound;
+
 	bool bBroken;
 };

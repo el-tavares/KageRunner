@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Items/PowerUp.h"
 #include "KageRunner/ModuleEditor.h"
+#include "Kismet/GameplayStatics.h"
 
 ADestructible::ADestructible()
 {
@@ -30,7 +31,7 @@ ADestructible::ADestructible()
 	DestructibleGeo->bNotifyBreaks = true;
 	DestructibleGeo->OnChaosBreakEvent.AddDynamic(this, &ADestructible::OnBreak);
 
-	//ADD_PROPERTY_SECTION("Destructible");
+	ADD_PROPERTY_SECTION("Destructible");
 }
 
 void ADestructible::BeginPlay()
@@ -46,6 +47,8 @@ void ADestructible::Tick(float DeltaTime)
 void ADestructible::OnBreak(const FChaosBreakEvent& BreakEvent)
 {
 	if (bBroken) return;
+
+	if (BreakSound) UGameplayStatics::PlaySoundAtLocation(this, BreakSound, GetActorLocation());
 
 	UWorld* World = GetWorld();
 	if (World && !PowerUpClasses.IsEmpty())

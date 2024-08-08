@@ -28,5 +28,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* ItemMesh;
 
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* InteractSound;
+
 	float RunningTime, RotationSpeed = 100.f, HoveringAmplitude = .5f, HoveringFrequency = 5.f;
 };

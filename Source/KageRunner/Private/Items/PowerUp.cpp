@@ -4,6 +4,7 @@
 #include "Characters/KageCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 APowerUp::APowerUp()
 {
@@ -36,6 +37,8 @@ void APowerUp::Tick(float DeltaTime)
 
 void APowerUp::Interact(AKageCharacter* KageCharacter)
 {
+	if (InteractSound) UGameplayStatics::PlaySoundAtLocation(this, InteractSound, GetActorLocation());
+
 	if (KageCharacter) KageCharacter->InteractExample();
 
 	Destroy();
