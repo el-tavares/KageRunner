@@ -39,7 +39,7 @@ void APowerUp::Interact(AKageCharacter* KageCharacter)
 {
 	if (InteractSound) UGameplayStatics::PlaySoundAtLocation(this, InteractSound, GetActorLocation());
 
-	if (KageCharacter) KageCharacter->InteractExample();
+	//if (KageCharacter) KageCharacter->InteractExample();
 
 	Destroy();
 }

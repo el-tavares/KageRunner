@@ -35,6 +35,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UProjectileMovementComponent* ProjectileMovement;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	class USoundBase* HitSound;
+
 	class UFieldSystemComponent* FieldSystem;
 
 	float ImpactMagnitude = 5000000.f, ImpactRadius = 100.f;

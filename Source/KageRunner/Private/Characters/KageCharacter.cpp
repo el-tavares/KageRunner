@@ -15,7 +15,11 @@ AKageCharacter::AKageCharacter()
 	PrimaryActorTick.bCanEverTick = false;
 
 	ZCapsuleHeight = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight();
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AKageCharacter::OnBeginOverlap);	// Binding OnBeginOverlap delegate
+
+	GetMesh()->SetCollisionResponseToAllChannels(ECR_Ignore);
 
 	BoxCollider = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
 	BoxCollider->SetupAttachment(GetRootComponent());

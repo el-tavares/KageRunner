@@ -26,7 +26,6 @@ AKagePlatform::AKagePlatform()
 	FloorMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 	FloorMesh->SetCollisionResponseToChannel(ECC_Destructible, ECR_Block);*/
 
-
 	BoxTrigger = CreateDefaultSubobject<UBoxComponent>(FName(TEXT("BoxComponent")));
 	BoxTrigger->SetupAttachment(GetRootComponent());
 	BoxTrigger->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -117,7 +116,7 @@ void AKagePlatform::SpawnOutsideActors()
 		}
 	}
 
-	if (!InsideObstacles.IsEmpty())	// Check if obstacle classes are not a empty array
+	if (!InsideObstacles.IsEmpty() && !bIsFirstPlatform)	// Check if obstacle classes are not a empty array and is not the first platform
 	{
 		const int Selection = FMath::RandRange(0, InsideObstacles.Num() - 1);	// Select packed obstacle class
 

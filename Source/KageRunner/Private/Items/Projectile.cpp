@@ -6,6 +6,7 @@
 #include "Components/SceneComponent.h"
 #include "Field/FieldSystemComponent.h"
 #include "Field/FieldSystemNodes.h"
+#include "Kismet/GameplayStatics.h"
 
 AProjectile::AProjectile()
 {
@@ -59,6 +60,8 @@ void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, FString(TEXT("Hit")));
+
+	if (HitSound) UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
 
 	ProjectileMesh->SetSimulatePhysics(true);
 	ProjectileMesh->SetPhysicsLinearVelocity(FVector::ZeroVector);
